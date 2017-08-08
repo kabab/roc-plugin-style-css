@@ -38,6 +38,11 @@ export default ({ context: { config: { settings } }, previousValue: webpackConfi
         styles.push({ extensions: [].concat(extensions), loaders: [].concat(loaders) });
     });
 
+    const loaders = null;
+    invokeHook('add-loaders')((loaders) => {
+        loaders = [...loaders];
+    });
+
     // Create a seperate pipeline for each `add-style` invocation
     styles.forEach(({ extensions, loaders }) => {
         // We allow stylesheet files to end with a query string
@@ -144,6 +149,9 @@ export default ({ context: { config: { settings } }, previousValue: webpackConfi
             disable: WEB && DEV,
         })
     );
+
+    if (loaders)
+      loaders.map((loader) => newWebpackConfig.module.loaders.push(loader))
 
     // We want to be able to use the css-loader in projects without the user needing to install them directly.
     newWebpackConfig.resolveLoader.root.push(join(__dirname, '../../node_modules'));
